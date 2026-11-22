@@ -1,6 +1,6 @@
 EL エミュレータ ユーザーマニュアル
 ===============
-2024-12-06
+2026-10-09
 
 ---------------------------------------
 ## 目次
@@ -23,11 +23,11 @@ EL エミュレータ ユーザーマニュアル
 
 本エミュレーターは Node.js 上で動作します。また、いくつかの Node モジュールに依存しています。
 
-* [Node.js](https://nodejs.org/en/)
-* [express](http://expressjs.com/)
+* [Node.js](https://nodejs.org/en/) (v23.6 以降)
+* [express](https://expressjs.com/)
 * [ws](https://github.com/websockets/ws)
 
-[Node.js 公式サイト](https://nodejs.org/en/)の指示に従って Node.js の LTS 版 をご利用のホストにインストールしておいてください。
+[Node.js 公式サイト](https://nodejs.org/en/)の指示に従って Node.js (v23.6 以降) をご利用のホストにインストールしておいてください。
 
 ### 本エミュレーターの設置
 
@@ -35,9 +35,9 @@ EL エミュレータ ユーザーマニュアル
 
 ### Node モジュールのインストール
 
-本エミュレーターが依存している node モジュールをインストールしてください。
+本エミュレーターが依存している Node モジュールをインストールしてください。
 
-```
+```shell
 $ cd [path_to_parent_directory]/elemu
 $ npm install
 ```
@@ -55,20 +55,14 @@ $ npm install
 ---------------------------------------
 ## <a id="startup-emulator">EL エミュレータの起動</a>
 
-シェル（Windows なら「PowerShell」、Mac なら「ターミナル」）で EL エミュレータ本体のディレクトリ `elemu` に `cd` して EL エミュレータ を起動します。
+シェル（Windows なら「PowerShell」、macOS なら「ターミナル」）で EL エミュレータ本体のディレクトリ `elemu` に `cd` して EL エミュレータ を起動します。
 
-```
+```shell
 $ cd [path_to_parent_directory]/elemu
-$ npm start
+$ node index.ts
 ```
 
 ※ `[path_to_parent_directory]` の部分はご利用の環境に合わせて変更してください。
-
-`npm` コマンドを使わずに、ダイレクトに `node` コマンドで起動することもできます。
-
-```
-$ node index.js
-```
 
 起動に成功したら、シェルに次のようなメッセージが表示されます：
 
@@ -78,8 +72,8 @@ $ node index.js
 
 もし ECHONET Lite パケットの送受信の様子をコンソール上に出力したい場合は、以下の通り、コマンドスイッチオプションを添えて起動することができます:
 
-```
-$ node index.js --enable-console-packet
+```shell
+$ node index.ts --enable-console-packet
 ```
 
 起動が完了したあと、本エミュレーターが ECHONET Lite パケットを送受信すると、次のようなメッセージがコンソールに出力されます:
@@ -93,8 +87,8 @@ $ node index.js --enable-console-packet
 
 もし OS クロックとの同期を取りやめたい場合は、次のように起動オプション `--disable-clock-sync` を指定してください。
 
-```
-$ node index.js --disable-clock-sync
+```shell
+$ node index.ts --disable-clock-sync
 ```
 
 このモードで動作した場合、デバイスオブジェクトの EPC 0x97 (現在時刻設定) および 0x98 (現在年月日設定) は 0001-01-01 00:00 を表す値にセットされます。また、OS クロックと同期しないため、Set しない限り、これら値が変更されることはありません。
@@ -260,7 +254,7 @@ EPC が選択されると、EDT 入力欄の先頭に (i) アイコンが表示�
 
 この一覧に表示されているデバイスのリストアイコンをクリックすると、リモートデバイス詳細画面が表示されます。
 
-![リモートデバイス書斎画面](imgs/remote_device_detail.png)
+![リモートデバイス詳細画面](imgs/remote_device_detail.png)
 
 この画面上段にあるプルダウンメニューから、現在、エミュレーターが発見したデバイスがリストアップされています。ここで表示したいリモートデバイスを切り替えることができます。
 
@@ -272,7 +266,7 @@ EPC が選択されると、EDT 入力欄の先頭に (i) アイコンが表示�
 ---------------------------------------
 ## <a id="webapi">プロパティ値を Web API で設定する機能</a>
 
-本エミュレーターでは、エミュレートするインスタンスのプロパティ値の読み取りと書き込みに関して、Web API を提供しています。以下、[curl](https://curl.se/) コマンドの実行例とレスポンス例を掲載します。また、レスポンスの JSON を成形表示するために [jq](https://jqlang.github.io/jq/) コマンドを使ってます。 
+本エミュレーターでは、エミュレートするインスタンスのプロパティ値の読み取りと書き込みに関して、Web API を提供しています。以下、[curl](https://curl.se/) コマンドの実行例とレスポンス例を掲載します。また、レスポンスの JSON を成形表示するために [jq](https://jqlang.github.io/jq/) コマンドを使っています。 
 
 なお、以下のリクエスト先のホストは `localhost` となっていますが、外部からでもアクセス可能です。その場合は、`localhost` の部分をホストコンピューターの IP アドレスやローカルホスト名に書き換えてください。
 
@@ -282,7 +276,7 @@ EPC が選択されると、EDT 入力欄の先頭に (i) アイコンが表示�
 次の例は、家庭用エアコン (EOJ: `0x013001`) の動作状態 (EPC: `0x80`) のプロパティ値を取得します。
 
 **curl**
-```
+```shell
 curl -sSv -X GET \
   http://localhost:8880/api/device/eojs/013001/epcs/80 | jq
 ```
@@ -327,7 +321,7 @@ curl -sSv -X GET \
 次の例は、家庭用エアコン (EOJ: `0x013001`) の動作状態 (EPC: `0x80`) のプロパティ値をセットします。 
 
 **curl**
-```
+```shell
 curl -sSv -X PUT \
   -H 'Content-Type:application/json' \
   -d '{ "edt": "31"  }' \
@@ -357,7 +351,7 @@ curl -sSv -X PUT \
 次の例は、家庭用エアコン (EOJ: `0x013001`) のすべてのプロパティ値を取得します。
 
 **curl**
-```
+```shell
 curl -sSv -X GET \
   http://localhost:8880/api/device/eojs/013001/epcs | jq
 ```
@@ -405,7 +399,7 @@ curl -sSv -X GET \
 次の例は、家庭用エアコン (EOJ: `0x013001`) の動作状態 (EPC: `0x80`) と室内温度計測値 (EPC: `0xBB`) のプロパティ値をまとめてセットします。 
 
 **curl**
-```
+```shell
 curl -sSv -X PUT \
   -H 'Content-Type:application/json' \
   -d '{ "vals": { "80": "30", "BB": "25"  } }' \
